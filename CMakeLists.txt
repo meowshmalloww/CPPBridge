@@ -57,9 +57,21 @@ target_include_directories(UniversalBridge PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/hub/jsi
 )
 
-# Windows-specific libraries
+# =============================================================================
+# PLATFORM-SPECIFIC LIBRARIES
+# =============================================================================
 if(WIN32)
     target_link_libraries(UniversalBridge PRIVATE wininet sqlite3)
+else()
+    # Linux/macOS: use libcurl for HTTP, pthread for threading
+    find_package(CURL REQUIRED)
+    find_package(Threads REQUIRED)
+    target_link_libraries(UniversalBridge PRIVATE 
+        CURL::libcurl 
+        Threads::Threads 
+        sqlite3
+    )
+    target_compile_definitions(UniversalBridge PRIVATE HUB_PLATFORM_POSIX)
 endif()
 
 # =============================================================================
@@ -80,10 +92,6 @@ target_include_directories(BridgeTest PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/hub/jsi
 )
 
-if(WIN32)
-    target_link_libraries(BridgeTest PRIVATE wininet sqlite3)
-endif()
-
 # =============================================================================
 # UNIT TESTS
 # =============================================================================
@@ -102,7 +110,13 @@ target_include_directories(UnitTests PUBLIC
 )
 
 if(WIN32)
+    target_link_libraries(BridgeTest PRIVATE wininet sqlite3)
     target_link_libraries(UnitTests PRIVATE wininet sqlite3)
+else()
+    find_package(CURL REQUIRED)
+    find_package(Threads REQUIRED)
+    target_link_libraries(BridgeTest PRIVATE CURL::libcurl Threads::Threads sqlite3)
+    target_link_libraries(UnitTests PRIVATE CURL::libcurl Threads::Threads sqlite3)
 endif()
 
 # =============================================================================

@@ -22,9 +22,9 @@ UniversalBridge is a **native C++ library** that provides:
 
 | Platform | Architecture | Status |
 |----------|--------------|--------|
-| Windows | x64 | ✅ Ready |
-| Linux | x64 | 🔧 Build from source |
-| macOS | x64/arm64 | 🔧 Build from source |
+| Windows | x64 | ✅ Pre-built |
+| Linux | x64 | ✅ Supported (requires libcurl) |
+| macOS | x64/arm64 | ✅ Supported (requires libcurl) |
 
 ## Quick Example
 
