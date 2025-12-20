@@ -1,0 +1,37 @@
+{
+    "name": "universalbridge",
+    "version": "1.0.0",
+    "description": "Native C++ backend for React Native, Electron, and Node.js applications",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "keywords": [
+        "native",
+        "ffi",
+        "react-native",
+        "electron",
+        "crypto",
+        "database",
+        "http"
+    ],
+    "author": "UniversalBridge Team",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yourusername/universalbridge"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "dependencies": {
+        "ffi-napi": "^4.0.3",
+        "ref-napi": "^3.0.3"
+    },
+    "files": [
+        "index.js",
+        "index.d.ts",
+        "prebuilds/**/*"
+    ],
+    "scripts": {
+        "test": "node test.js"
+    }
+}

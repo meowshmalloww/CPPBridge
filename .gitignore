@@ -1,0 +1,38 @@
+# Build outputs
+build/
+cmake-build-*/
+*.dll
+*.so
+*.dylib
+*.exe
+*.obj
+*.o
+*.lib
+*.a
+
+# IDE files
+.vs/
+.vscode/
+*.user
+*.sln
+*.vcxproj*
+.idea/
+*.swp
+
+# npm
+node_modules/
+npm-debug.log
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test databases
+*.db
+*.db-*
+
+# Logs
+logs/
+*.log
