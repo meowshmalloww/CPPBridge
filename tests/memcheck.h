@@ -17,7 +17,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace Hub::MemCheck {
+namespace Hub {
+namespace MemCheck {
 
 // =============================================================================
 // ALLOCATION TRACKER
@@ -70,7 +71,9 @@ public:
     if (!allocations_.empty()) {
       std::cout << "\nPotential leaks (" << allocations_.size() << "):\n";
       int shown = 0;
-      for (const auto &[ptr, info] : allocations_) {
+      for (auto it = allocations_.begin(); it != allocations_.end(); ++it) {
+        void *ptr = it->first;
+        const AllocInfo &info = it->second;
         std::cout << "  " << ptr << ": " << info.size << " bytes";
         std::cout << " (" << info.file << ":" << info.line << ")\n";
         if (++shown >= 10) {
@@ -110,7 +113,8 @@ inline void report_memcheck() { AllocationTracker::instance().report(); }
 
 inline size_t leak_count() { return AllocationTracker::instance().leakCount(); }
 
-} // namespace Hub::MemCheck
+} // namespace MemCheck
+} // namespace Hub
 
 // =============================================================================
 // C API FOR FFI

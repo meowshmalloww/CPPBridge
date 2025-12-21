@@ -1,1 +1,0 @@
-Hello! This file was written by your C++ Universal Bridge.

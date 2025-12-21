@@ -1,71 +1,92 @@
-# UniversalBridge
+# CPPBridge v2.0.0
 
-🚀 **Native C++ backend for React Native, Electron, and Node.js applications.**
+> **Universal C++ Bridge** - Connect C++ to any frontend with just ONE keyword.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)]()
+## ✨ Features
 
-## Features
+- 🚀 **One Keyword**: Just add `EXPOSE()` to any C++ function
+- 🖥️ **Electron/Node.js**: Works via koffi FFI
+- 📱 **React Native**: iOS & Android via JSI
+- 🌐 **WebAssembly**: Browser support via Emscripten
+- 🔧 **Zero Config**: Clone, write C++, build, done!
 
-| Category | Features |
-|----------|----------|
-| 🔒 **Security** | AES-256-GCM, SHA-256, PBKDF2, Path Sandboxing |
-| 🌐 **Network** | HTTP with retry, WebSocket with auto-reconnect |
-| 💾 **Storage** | SQLite, Key-Value Store, Memory-Mapped Files |
-| 🖥️ **System** | Process Management, Registry, Clipboard |
-| 📝 **Logging** | Async JSON logging with rotation |
+## 🎯 Supported Platforms
 
-## Quick Start
+| Platform | Status | Method |
+|----------|--------|--------|
+| Windows | ✅ Ready | DLL + koffi |
+| macOS | ✅ Ready | dylib + koffi |
+| Linux | ✅ Ready | .so + koffi |
+| React Native (iOS) | ✅ Ready | JSI |
+| React Native (Android) | ✅ Ready | JSI/JNI |
+| Web Browsers | ✅ Ready | WebAssembly |
 
+## 🚀 Quick Start (30 seconds!)
+
+### 1. Clone
 ```bash
-npm install universalbridge
+git clone https://github.com/YourRepo/CPPBridge.git
+cd CPPBridge
 ```
 
+### 2. Write C++ (in `src/` folder)
+```cpp
+#include "../cppbridge.h"
+
+EXPOSE() const char* hello(const char* name) {
+    return TEXT("Hello, " + std::string(name));
+}
+
+EXPOSE() int add(int a, int b) {
+    return a + b;
+}
+```
+
+### 3. Build
+```bash
+# Windows: Double-click build.bat
+# Or run: cmake -B build && cmake --build build
+```
+
+### 4. Use in JavaScript
 ```javascript
-import { http, database, keyvalue } from 'universalbridge';
+const cpp = require('./auto-bridge');
 
-// HTTP request
-const response = http.get('https://api.github.com');
-
-// Key-Value storage
-const store = keyvalue.open('settings.db');
-store.set('theme', 'dark');
-console.log(store.get('theme')); // 'dark'
-
-// Database
-const db = database.open('app.db');
-db.exec('CREATE TABLE users (id INTEGER, name TEXT)');
+console.log(cpp.hello("World"));  // "Hello, World"
+console.log(cpp.add(5, 3));       // 8
 ```
 
-## Documentation
+**That's it!** No complex FFI code. No manual bindings. Just `EXPOSE()`.
 
-- 📖 [Quickstart Guide](docs/QUICKSTART.md) - Get running in 5 minutes
-- 📚 [API Reference](docs/API.md) - Full documentation
-- 🔧 [Building from Source](docs/BUILDING.md) - Compile yourself
+## 📁 Project Structure
 
-## Supported Platforms
-
-| Platform | Status |
-|----------|--------|
-| Windows x64 | ✅ Pre-built |
-| Linux x64 | 🔧 Build from source |
-| macOS x64/arm64 | 🔧 Build from source |
-
-## Building
-
-```bash
-git clone https://github.com/yourusername/UniversalBridge.git
-cd UniversalBridge
-mkdir build && cd build
-cmake ..
-cmake --build . --config Release
+```
+CPPBridge/
+├── cppbridge.h       # Magic header (just include this)
+├── auto-bridge.js    # Auto-discovers your functions
+├── build.bat         # One-click Windows build
+├── src/              # Put your C++ files here
+│   └── my_code.cpp   # Your custom functions
+├── hub/              # Core library modules
+├── npm/              # Node.js package
+├── react-native/     # React Native module
+└── wasm/             # WebAssembly build
 ```
 
-## License
+## 📖 Documentation
 
-MIT License - Free for personal and commercial use.
+- [QUICKSTART.md](QUICKSTART.md) - Get started in 2 minutes
+- [docs/README.md](docs/README.md) - Full documentation
+- [docs/API.md](docs/API.md) - API reference
 
-## Contributing
+## 🔑 Keywords
 
-Contributions are welcome! Please read our contributing guidelines before submitting PRs.
+| Keyword | Purpose |
+|---------|---------|
+| `EXPOSE()` | Makes function callable from JavaScript |
+| `TEXT(...)` | Safely returns dynamic strings |
+| `JSON(...)` | Returns JSON strings |
+
+## 📜 License
+
+MIT License - Use freely in personal and commercial projects.

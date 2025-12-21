@@ -9,10 +9,14 @@ cmake-build-*/
 *.o
 *.lib
 *.a
+*.exp
+*.pdb
+*.ilk
 
 # IDE files
 .vs/
-.vscode/
+.vscode/*
+!.vscode/c_cpp_properties.json
 *.user
 *.sln
 *.vcxproj*
@@ -45,4 +49,8 @@ __pycache__/
 # Test outputs
 test_crashdumps/
 test_logs/
-*.txt
+
+# Generated files (can be rebuilt)
+backend.dll
+backend.exp
+backend.lib

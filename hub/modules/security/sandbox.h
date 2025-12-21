@@ -15,9 +15,10 @@
 #include <string>
 #include <vector>
 
-namespace Hub::Security {
-
 namespace fs = std::filesystem;
+
+namespace Hub {
+namespace Security {
 
 // =============================================================================
 // PATH VALIDATOR
@@ -283,7 +284,8 @@ public:
   }
 };
 
-} // namespace Hub::Security
+} // namespace Security
+} // namespace Hub
 
 // =============================================================================
 // C API FOR FFI

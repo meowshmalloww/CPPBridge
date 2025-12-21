@@ -1,47 +1,39 @@
 # Changelog
 
-All notable changes to UniversalBridge will be documented in this file.
+## [2.0.0] - 2025-12-21
+
+### ✨ Major Features
+- **Auto-Bridge System**: Just use `EXPOSE()` keyword - no manual bindings needed!
+- **Cross-Platform**: Full support for Windows, macOS, and Linux
+- **React Native**: iOS and Android support via JSI
+- **WebAssembly**: Browser support via Emscripten
+
+### 📦 New Files
+- `cppbridge.h` - Magic one-header include with `EXPOSE()`, `TEXT()`, `JSON()` macros
+- `auto-bridge.js` - Auto-discovers and loads C++ functions
+- `build.bat` - One-click Windows build script
+- `QUICKSTART.md` - 2-minute getting started guide
+
+### 🔧 Improvements
+- Simplified API: Just `EXPOSE()` and you're done
+- `TEXT()` macro for safe string returns
+- `JSON()` macro for JSON data
+- Auto-discovery of functions in JavaScript
+- Platform guards for React Native JSI code
+
+### 🐛 Fixes
+- Fixed thread_local + dllexport conflict on Windows
+- Fixed unused include warnings
+- Fixed ODR violations in header functions
+
+---
 
 ## [1.0.0] - 2025-12-20
 
-### 🎉 Initial Release
-
-**Core Features:**
-- Thread pool with priority queues
-- Event bus for push notifications
-- Async task system with futures
-
-**Security:**
-- AES-256-GCM encryption with hardware acceleration
-- SHA-256 and PBKDF2 hashing
-- Path sandboxing and input validation
-
-**Networking:**
-- HTTP client with connection pooling and retry
-- WebSocket client with auto-reconnect
-- Binary message support
-
-**Storage:**
-- SQLite database with ORM
-- Key-value store (persistent)
-- Memory-mapped files with auto-chunking
-
-**System:**
-- Process management (list, spawn, kill)
-- Registry access (read, write, enumerate)
-- Clipboard operations
-- Environment variables
-
-**Logging:**
-- Async logging with rotation
-- JSON structured output
-- Multiple severity levels
-
-**Compression:**
-- Huffman coding
-- ZLIB-compatible format
-
-### Platforms
-- Windows x64 (pre-built)
-- Linux x64 (build from source)
-- macOS x64/arm64 (build from source)
+### Initial Release
+- Core modules: HTTP, Database, KeyValue, Crypto, Compression
+- Windows DLL support
+- Node.js npm package with ffi-napi
+- SQLite database integration
+- AES-256 encryption
+- LZ77 and Huffman compression

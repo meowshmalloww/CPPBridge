@@ -12,7 +12,8 @@
 #include <string>
 #include <vector>
 
-namespace Hub::Database {
+namespace Hub {
+namespace Database {
 
 // =============================================================================
 // KEY-VALUE STORE
@@ -61,8 +62,8 @@ public:
     std::lock_guard<std::mutex> lock(mutex_);
     std::vector<std::string> result;
     result.reserve(data_.size());
-    for (const auto &[k, v] : data_) {
-      result.push_back(k);
+    for (auto it = data_.begin(); it != data_.end(); ++it) {
+      result.push_back(it->first);
     }
     return result;
   }
@@ -87,7 +88,8 @@ private:
 // Global key-value store instance
 inline KeyValueStore globalKVStore;
 
-} // namespace Hub::Database
+} // namespace Database
+} // namespace Hub
 
 // =============================================================================
 // C API FOR FFI

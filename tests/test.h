@@ -10,7 +10,8 @@
 #include <string>
 #include <vector>
 
-namespace Hub::Test {
+namespace Hub {
+namespace Test {
 
 struct TestResult {
   std::string name;
@@ -34,7 +35,10 @@ public:
 
     std::cout << "\n=== Running " << tests_.size() << " tests ===\n\n";
 
-    for (const auto &[name, test] : tests_) {
+    for (size_t i = 0; i < tests_.size(); i++) {
+      const auto &testPair = tests_[i];
+      const std::string &name = testPair.first;
+      const std::function<void()> &test = testPair.second;
       currentTest_ = name;
       currentError_.clear();
 
@@ -130,4 +134,5 @@ private:
 
 #define RUN_ALL_TESTS() Hub::Test::TestRunner::instance().run()
 
-} // namespace Hub::Test
+} // namespace Test
+} // namespace Hub
