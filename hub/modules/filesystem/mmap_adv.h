@@ -13,7 +13,6 @@
 #include <cstring>
 #include <functional>
 #include <string>
-#include <vector>
 
 // Platform detection
 #ifdef _WIN32

@@ -1,0 +1,48 @@
+{
+    "name": "react-native-cppbridge",
+    "version": "1.0.0",
+    "description": "React Native native module for CPPBridge C++ backend",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "react-native": "src/index",
+    "source": "src/index",
+    "files": [
+        "src",
+        "lib",
+        "android",
+        "ios",
+        "cpp",
+        "*.podspec",
+        "react-native-cppbridge.podspec",
+        "!ios/build",
+        "!android/build"
+    ],
+    "scripts": {
+        "typescript": "tsc --noEmit",
+        "lint": "eslint \"**/*.{js,ts,tsx}\""
+    },
+    "keywords": [
+        "react-native",
+        "ios",
+        "android",
+        "cpp",
+        "native",
+        "crypto",
+        "database",
+        "http"
+    ],
+    "repository": "https://github.com/user/react-native-cppbridge",
+    "author": "CPPBridge Team",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/react": "*",
+        "@types/react-native": "*",
+        "react": "*",
+        "react-native": "*",
+        "typescript": "^5.0.0"
+    },
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*"
+    }
+}

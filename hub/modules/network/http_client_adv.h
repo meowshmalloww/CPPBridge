@@ -16,13 +16,11 @@
 #pragma comment(lib, "wininet.lib")
 
 #include <chrono>
-#include <functional>
 #include <map>
 #include <mutex>
 #include <random>
 #include <string>
 #include <thread>
-#include <vector>
 
 namespace Hub::Network {
 
@@ -93,6 +91,7 @@ public:
 
   // Get connection to specific host (pooled)
   HINTERNET getConnection(const std::string &host, int port, bool https) {
+    (void)https; // Protocol handled by flags, not port
     std::lock_guard<std::mutex> lock(mutex_);
 
     std::string key = host + ":" + std::to_string(port);

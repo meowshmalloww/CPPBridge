@@ -14,11 +14,9 @@
 #include <windows.h>
 
 #include <cstdint>
-#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-
 
 namespace Hub::System {
 
@@ -187,12 +185,7 @@ public:
   static std::vector<ProcessInfo> list() {
     std::vector<ProcessInfo> result;
 
-    // Enumerate PIDs using EnumProcesses
-    DWORD processes[4096];
-    DWORD needed;
-
-    // Use EnumProcesses from psapi - but we avoid that header
-    // Instead, enumerate by trying PIDs 0-65535
+    // Enumerate by trying PIDs 0-65535 (avoids psapi header)
     for (DWORD pid = 4; pid < 65536; pid += 4) {
       HANDLE h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
       if (h) {
