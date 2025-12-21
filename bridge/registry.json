@@ -1,0 +1,64 @@
+{
+  "version": "3.1.0",
+  "generated": "2025-12-21T20:33:44.188Z",
+  "functions": {
+    "add": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int"
+      ]
+    },
+    "subtract": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int"
+      ]
+    },
+    "multiply": {
+      "returnType": "double",
+      "params": [
+        "double",
+        "double"
+      ]
+    },
+    "divide": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int"
+      ]
+    },
+    "greet": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ]
+    },
+    "getVersion": {
+      "returnType": "str",
+      "params": []
+    },
+    "getAppInfo": {
+      "returnType": "str",
+      "params": []
+    },
+    "processText": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ]
+    },
+    "stringLength": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ]
+    },
+    "bridgeTest": {
+      "returnType": "str",
+      "params": []
+    }
+  }
+}

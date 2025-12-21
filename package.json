@@ -1,0 +1,29 @@
+{
+    "name": "universalbridge",
+    "version": "3.0.0",
+    "description": "Universal C++ to JavaScript Bridge - Write C++ once, use everywhere",
+    "main": "bridge/index.js",
+    "scripts": {
+        "build:bridge": "node scripts/build.js",
+        "test": "node -e \"const b = require('./bridge'); console.log(b._bridge_test ? b._bridge_test() : 'Build first: npm run build:bridge')\""
+    },
+    "keywords": [
+        "cpp",
+        "c++",
+        "bridge",
+        "electron",
+        "react-native",
+        "wasm",
+        "webassembly",
+        "ffi",
+        "native",
+        "koffi"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {},
+    "peerDependencies": {
+        "koffi": "^2.0.0"
+    }
+}

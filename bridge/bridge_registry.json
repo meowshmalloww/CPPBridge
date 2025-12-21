@@ -1,0 +1,44 @@
+{
+  "version": "3.0.0",
+  "generated": "2025-12-21T20:26:13.877Z",
+  "functions": {
+    "add": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int"
+      ]
+    },
+    "multiply": {
+      "returnType": "double",
+      "params": [
+        "double",
+        "double"
+      ]
+    },
+    "greet": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ]
+    },
+    "getAppInfo": {
+      "returnType": "str",
+      "params": []
+    },
+    "calculate": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int",
+        "int"
+      ]
+    },
+    "processText": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ]
+    }
+  }
+}

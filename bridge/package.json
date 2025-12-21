@@ -1,0 +1,15 @@
+{
+  "name": "cppbridge",
+  "version": "3.0.0",
+  "description": "Universal C++ to JavaScript Bridge - Write once, run everywhere",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -e \"const b = require('./'); console.log(b._bridge_test())\""
+  },
+  "keywords": ["cpp", "bridge", "electron", "react-native", "wasm", "ffi", "native"],
+  "license": "MIT",
+  "dependencies": {},
+  "peerDependencies": {
+    "koffi": "^2.0.0"
+  }
+}

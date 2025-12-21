@@ -1,47 +1,57 @@
 // =============================================================================
-// EXAMPLE: my_functions.cpp
+// EXAMPLE: src/my_functions.cpp - CPPBridge v3.1
 // =============================================================================
-// Put this file in the 'src' folder and run build.bat!
-// =============================================================================
-
-#include "../cppbridge.h" // Just include this ONE file
-
-// =============================================================================
-// YOUR FUNCTIONS - Add EXPOSE() to anything you want in JavaScript
+// Put this file in the 'src' folder and run: npm run build:bridge
 // =============================================================================
 
-// A simple greeting function
-EXPOSE() const char *greet(const char *name) {
-  return TEXT("Hello, " + std::string(name) + "!");
-}
+#include "../bridge_core.h"
 
-// Add two numbers
-EXPOSE() int add(int a, int b) { return a + b; }
+// =============================================================================
+// MATH FUNCTIONS
+// =============================================================================
 
-// Multiply two numbers
-EXPOSE() double multiply(double a, double b) { return a * b; }
+BRIDGE_FN(int, add, int a, int b) { return a + b; }
 
-// Process some text
-EXPOSE() const char *processText(const char *input) {
-  std::string result = "Processed: ";
-  result += (input ? input : "nothing");
-  result += " (length: ";
-  result += std::to_string(strlen(input ? input : ""));
-  result += ")";
-  return TEXT(result);
-}
+BRIDGE_FN(int, subtract, int a, int b) { return a - b; }
 
-// Return JSON data
-EXPOSE() const char *getData() {
-  return JSON("{\"status\": \"ok\", \"message\": \"Data from C++!\"}");
+BRIDGE_FN(double, multiply, double x, double y) { return x * y; }
+
+BRIDGE_FN(int, divide, int a, int b) {
+  // Manual crash protection
+  if (b == 0) {
+    std::cerr << "[CPPBridge] divide: Cannot divide by zero" << std::endl;
+    return 0;
+  }
+  return a / b;
 }
 
 // =============================================================================
-// INTERNAL HELPERS (No EXPOSE = hidden from JavaScript)
+// STRING FUNCTIONS
 // =============================================================================
 
-std::string internalHelper() {
-  return "This function is NOT visible to JavaScript";
+BRIDGE_FN(const char *, greet, const char *name) {
+  return BRIDGE_STRING("Hello, " + std::string(name ? name : "World") + "!");
 }
 
-int calculateSomething(int x) { return x * 2 + 1; }
+BRIDGE_FN(const char *, getVersion) { return "3.1.0"; }
+
+BRIDGE_FN(const char *, getAppInfo) {
+  return BRIDGE_STRING("{\"name\": \"CPPBridge\", \"version\": \"3.1.0\"}");
+}
+
+BRIDGE_FN(const char *, processText, const char *input) {
+  std::string text = input ? input : "";
+  std::string result =
+      "Processed (" + std::to_string(text.length()) + " chars): " + text;
+  return BRIDGE_STRING(result);
+}
+
+BRIDGE_FN(int, stringLength, const char *str) {
+  return str ? static_cast<int>(strlen(str)) : 0;
+}
+
+// =============================================================================
+// TEST FUNCTION
+// =============================================================================
+
+BRIDGE_FN(const char *, bridgeTest) { return "✅ CPPBridge v3.1 is working!"; }
