@@ -2,10 +2,8 @@
 # GitHub Actions - Cross-Platform Build for UniversalBridge
 # ==============================================================================
 # 
-# What this does:
-#   1. On every push to main/master → Builds and tests on all platforms
-#   2. On version tag (v6.1.0) → Creates GitHub Release with binaries
-#   3. Users can download pre-built binaries without needing a compiler
+# Builds on: Windows, macOS, Linux
+# Releases on: Version tags (v6.1.0)
 #
 # ==============================================================================
 
@@ -17,7 +15,7 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main, master]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   # ============================================================================
@@ -38,14 +36,25 @@ jobs:
       - name: Install npm dependencies
         run: npm install
         
-      - name: Configure CMake (Visual Studio 2022)
+      - name: Configure CMake
         run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
         
       - name: Build Release
         run: cmake --build build --config Release
         
       - name: Copy DLL to bridge folder
-        run: copy build\Release\UniversalBridge.dll bridge\cppbridge.dll
+        run: |
+          if (Test-Path "build\Release\UniversalBridge.dll") {
+            Copy-Item "build\Release\UniversalBridge.dll" -Destination "bridge\cppbridge.dll"
+            Write-Host "Copied UniversalBridge.dll"
+          } elseif (Test-Path "build\Release\cppbridge.dll") {
+            Copy-Item "build\Release\cppbridge.dll" -Destination "bridge\cppbridge.dll"
+            Write-Host "Copied cppbridge.dll"
+          } else {
+            Write-Host "DLL not found, listing build directory:"
+            Get-ChildItem -Recurse build\Release -ErrorAction SilentlyContinue
+          }
+        shell: pwsh
         
       - name: Run tests
         run: node test/test_suite.js
@@ -57,9 +66,10 @@ jobs:
           name: cppbridge-windows-x64
           path: bridge/cppbridge.dll
           retention-days: 30
+        if: always()
 
   # ============================================================================
-  # macOS Build (x64 + ARM64 Universal)
+  # macOS Build (x64)
   # ============================================================================
   build-macos:
     runs-on: macos-latest
@@ -77,23 +87,20 @@ jobs:
         run: npm install
         
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
         
       - name: Build
         run: cmake --build build
         
       - name: Copy dylib to bridge folder
         run: |
-          if [ -f build/libUniversalBridge.dylib ]; then
-            cp build/libUniversalBridge.dylib bridge/cppbridge.dylib
-          elif [ -f build/UniversalBridge.dylib ]; then
-            cp build/UniversalBridge.dylib bridge/cppbridge.dylib
-          fi
+          find build -name "*.dylib" -exec cp {} bridge/cppbridge.dylib \; 2>/dev/null || true
+          ls -la bridge/ || true
         
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cppbridge-macos-universal
+          name: cppbridge-macos-x64
           path: bridge/cppbridge.dylib
           retention-days: 30
         if: always()
@@ -119,9 +126,9 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake libcurl4-openssl-dev
+          sudo apt-get install -y build-essential cmake
         
-      - name: Configure CMake
+      - name: Configure CMake  
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
         
       - name: Build
@@ -129,9 +136,8 @@ jobs:
         
       - name: Copy so to bridge folder
         run: |
-          if [ -f build/libUniversalBridge.so ]; then
-            cp build/libUniversalBridge.so bridge/cppbridge.so
-          fi
+          find build -name "*.so" -exec cp {} bridge/cppbridge.so \; 2>/dev/null || true
+          ls -la bridge/ || true
         
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
@@ -163,7 +169,7 @@ jobs:
         with:
           files: |
             artifacts/cppbridge-windows-x64/cppbridge.dll
-            artifacts/cppbridge-macos-universal/cppbridge.dylib
+            artifacts/cppbridge-macos-x64/cppbridge.dylib
             artifacts/cppbridge-linux-x64/cppbridge.so
           generate_release_notes: true
           draft: false

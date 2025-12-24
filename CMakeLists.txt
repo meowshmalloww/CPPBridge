@@ -67,74 +67,43 @@ target_include_directories(UniversalBridge PUBLIC
 if(WIN32)
     target_link_libraries(UniversalBridge PRIVATE wininet sqlite3)
 else()
-    # Linux/macOS: use libcurl for HTTP, pthread for threading
-    find_package(CURL REQUIRED)
+    # Linux/macOS: use pthread for threading
     find_package(Threads REQUIRED)
-    target_link_libraries(UniversalBridge PRIVATE 
-        CURL::libcurl 
-        Threads::Threads 
-        sqlite3
-    )
+    
+    # CURL is optional - HTTP module will be disabled without it
+    find_package(CURL QUIET)
+    if(CURL_FOUND)
+        target_link_libraries(UniversalBridge PRIVATE 
+            CURL::libcurl 
+            Threads::Threads 
+            sqlite3
+        )
+        target_compile_definitions(UniversalBridge PRIVATE HUB_HAS_CURL)
+    else()
+        message(STATUS "CURL not found - HTTP module disabled")
+        target_link_libraries(UniversalBridge PRIVATE 
+            Threads::Threads 
+            sqlite3
+        )
+    endif()
     target_compile_definitions(UniversalBridge PRIVATE HUB_PLATFORM_POSIX)
 endif()
 
 # =============================================================================
-# TEST EXECUTABLE (Disabled - main.cpp not present)
+# TEST EXECUTABLE (Disabled - tests folder deleted)
 # =============================================================================
-# add_executable(BridgeTest 
-#     main.cpp 
-#     hub/hub.cpp
-#     ${CORE_SOURCES}
-#     ${MODULE_SOURCES}
-# )
-
-# target_include_directories(BridgeTest PUBLIC 
-#     ${CMAKE_CURRENT_SOURCE_DIR}/hub
-#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/core
-#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules
-#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules/database
-#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/jsi
-# )
-
-# =============================================================================
-# UNIT TESTS
-# =============================================================================
-add_executable(UnitTests 
-    tests/test_all.cpp
-    ${CORE_SOURCES}
-    ${MODULE_SOURCES}
-)
-
-target_include_directories(UnitTests PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/core
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules/database
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests
-)
-
-if(WIN32)
-    # target_link_libraries(BridgeTest PRIVATE wininet sqlite3)
-    target_link_libraries(UnitTests PRIVATE wininet sqlite3)
-else()
-    find_package(CURL REQUIRED)
-    find_package(Threads REQUIRED)
-    # target_link_libraries(BridgeTest PRIVATE CURL::libcurl Threads::Threads sqlite3)
-    target_link_libraries(UnitTests PRIVATE CURL::libcurl Threads::Threads sqlite3)
-endif()
+# Unit tests are now in test/ folder using Node.js
 
 # =============================================================================
 # COMPILER OPTIONS
 # =============================================================================
 if(MSVC)
     target_compile_options(UniversalBridge PRIVATE /W4 /permissive-)
-    # target_compile_options(BridgeTest PRIVATE /W4 /permissive-)
 else()
     target_compile_options(UniversalBridge PRIVATE -Wall -Wextra -pedantic)
-    # target_compile_options(BridgeTest PRIVATE -Wall -Wextra -pedantic)
 endif()
 
 message(STATUS "UniversalBridge v${PROJECT_VERSION}")
-message(STATUS "Core sources: ${CORE_SOURCES}")
-message(STATUS "Module sources: ${MODULE_SOURCES}")
+message(STATUS "Platform: ${CMAKE_SYSTEM_NAME}")
+
 
