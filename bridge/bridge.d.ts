@@ -133,9 +133,10 @@ export interface UniversalBridge {
     DemoStatus_Running(): number;
     DemoStatus_Done(): number;
     DemoStatus_Failed(): number;
-    DemoPoint_create(): string;
-    DemoVec3_create(): string;
+    DemoPoint_create(arg0: number, arg1: number): string;
+    DemoVec3_create(arg0: number, arg1: number, arg2: number): string;
     add(arg0: number, arg1: number): number;
+    processImage(arg0: number, arg1: number): void;
     get_counter(): number;
     set_counter(arg0: number): void;
     get_name(): number;

@@ -14,9 +14,9 @@
 - No Base64 encoding, no double-copy
 - `BRIDGE void process(BRIDGE_BUFFER(data, size))`
 
-#### 3. GitHub Actions (Cross-Platform Prebuilds)
+#### 3. GitHub Actions (Windows CI/CD)
 - Automatic builds on push/tag
-- Windows x64, macOS Universal, Linux x64
+- Windows x64 binary released
 - Auto-release to GitHub Releases on version tags
 
 ### Technical

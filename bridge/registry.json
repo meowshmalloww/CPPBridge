@@ -691,6 +691,76 @@
         "double"
       ],
       "async": false
+    },
+    "add": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "int"
+      ],
+      "async": false
+    },
+    "processImage": {
+      "returnType": "void",
+      "params": [
+        "int",
+        "int"
+      ],
+      "async": false
+    },
+    "get_counter": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "set_counter": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "get_name": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "set_name": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "name_v0": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "name_v1": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "name_v2": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "name_v3": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "name_v4": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "name_create": {
+      "returnType": "str",
+      "params": [],
+      "async": false
     }
   }
 }

@@ -2,40 +2,68 @@
 
 **v6.1 Production Edition** - C++ to JavaScript bridge with enterprise features.
 
-[![Build](https://github.com/user/universal-bridge/actions/workflows/build.yml/badge.svg)](https://github.com/user/universal-bridge/actions)
-
 ---
 
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-2. [Functions](#1-functions)
-3. [Variables](#2-variables)
-4. [Enums](#3-enums)
-5. [Structs](#4-structs)
-6. [Classes](#5-classes)
-7. [Exceptions](#6-exceptions)
-8. [Callbacks](#7-callbacks)
-9. [Modules](#8-modules)
-10. [Auto-Registry](#auto-registry)
-11. [Security](#security)
+2. [Building](#building)
+3. [Functions](#1-functions)
+4. [Variables](#2-variables)
+5. [Enums](#3-enums)
+6. [Structs](#4-structs)
+7. [Classes](#5-classes)
+8. [Exceptions](#6-exceptions)
+9. [Callbacks](#7-callbacks)
+10. [Modules](#8-modules)
+11. [Auto-Registry](#auto-registry)
+12. [Security](#security)
 
 ---
 
 ## Getting Started
 
 ```bash
-# Clone
 git clone <repo> UniversalBridge
 cd UniversalBridge
 npm install
+```
 
-# Build
+---
+
+## Building
+
+### Windows (Recommended)
+
+```bash
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release
 copy build\Release\UniversalBridge.dll bridge\cppbridge.dll
+```
 
-# Generate registry
+**Auto-Build:** GitHub Actions automatically builds Windows binaries on push.
+
+### macOS
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cp build/libUniversalBridge.dylib bridge/cppbridge.dylib
+```
+
+### Linux
+
+```bash
+sudo apt-get install build-essential cmake
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cp build/libUniversalBridge.so bridge/cppbridge.so
+```
+
+### After Building
+
+```bash
+# Generate registry & TypeScript types
 node scripts/generate-registry.js
 
 # Use

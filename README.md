@@ -2,8 +2,6 @@
 
 **Production-ready C++ to JavaScript bridge with enterprise features.**
 
-[![Build](https://github.com/user/universal-bridge/actions/workflows/build.yml/badge.svg)](https://github.com/user/universal-bridge/actions)
-
 ## Features
 
 | Feature | Description |
@@ -18,7 +16,6 @@
 | **TypeScript** | Full autocomplete (bridge.d.ts) |
 | **Hot-Swap** | DLL versioning for Windows |
 | **Zero-Copy** | Direct buffer access for AI/Video |
-| **CI/CD** | GitHub Actions prebuilds |
 
 ---
 
@@ -37,9 +34,6 @@ copy build\Release\UniversalBridge.dll bridge\cppbridge.dll
 
 # Generate registry & types
 node scripts/generate-registry.js
-
-# Test
-node test/test_suite.js
 ```
 
 ---
@@ -108,34 +102,6 @@ const calc = Factory.create();  // Auto-deletes on GC!
 | `BRIDGE_CALLBACK` | Async callback |
 | `BRIDGE_BUFFER` | Zero-copy buffer |
 | `str` / `RET(x)` | String helpers |
-
----
-
-## GitHub Actions CI/CD
-
-Pre-built binaries are automatically created on every push:
-
-| Platform | Binary |
-|----------|--------|
-| Windows x64 | `cppbridge.dll` |
-| macOS Universal | `cppbridge.dylib` |
-| Linux x64 | `cppbridge.so` |
-
-On version tag (`v6.1.0`), binaries are released to GitHub Releases.
-
----
-
-## Test Suite
-
-```bash
-node test/test_suite.js
-```
-```
-✅ Passed:  86
-❌ Failed:  0
-⏭️  Skipped: 1
-📊 Total:   87
-```
 
 ---
 

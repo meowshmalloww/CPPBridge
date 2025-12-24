@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\hub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\generated_bridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\bridge_runtime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\example_bridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\crashhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\crashhandler_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\eventbus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\logging_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\version.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\keyvalue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\orm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\file_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\mmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\mmap_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\hardware\usb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\ftp_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\http_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\http_client_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\websocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\websocket_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\wsserver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\crypto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\crypto_hw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\sandbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\clipboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\diskio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\power.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysutils_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\cache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\compress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\compress_adv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\schema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\arena.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\async.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\crashhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\crashhandler_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\eventbus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\logging_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\core\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\keyvalue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\orm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\database\sqlite3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\file_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\mmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\filesystem\mmap_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\hardware\usb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\ftp_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\http_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\http_client_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\http_client_portable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\websocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\websocket_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\network\wsserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\crypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\crypto_hw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\security\sandbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\clipboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\diskio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\power.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysutils_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\system\sysutils_portable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\base64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\compress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\compress_adv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\14697\Downloads\UniversalBridge\hub\modules\utils\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\14697\Downloads\UniversalBridge\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5A23C4A0-91F9-35B8-9A00-ADBA4A953DF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1162513A-C0ED-337A-A8F0-A42E12994B06}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

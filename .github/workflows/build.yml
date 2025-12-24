@@ -1,8 +1,8 @@
 # ==============================================================================
-# GitHub Actions - Cross-Platform Build for UniversalBridge
+# GitHub Actions - Windows Build for UniversalBridge
 # ==============================================================================
 # 
-# Builds on: Windows, macOS, Linux
+# Builds on: Windows only
 # Releases on: Version tags (v6.1.0)
 #
 # ==============================================================================
@@ -47,12 +47,6 @@ jobs:
           if (Test-Path "build\Release\UniversalBridge.dll") {
             Copy-Item "build\Release\UniversalBridge.dll" -Destination "bridge\cppbridge.dll"
             Write-Host "Copied UniversalBridge.dll"
-          } elseif (Test-Path "build\Release\cppbridge.dll") {
-            Copy-Item "build\Release\cppbridge.dll" -Destination "bridge\cppbridge.dll"
-            Write-Host "Copied cppbridge.dll"
-          } else {
-            Write-Host "DLL not found, listing build directory:"
-            Get-ChildItem -Recurse build\Release -ErrorAction SilentlyContinue
           }
         shell: pwsh
         
@@ -66,111 +60,26 @@ jobs:
           name: cppbridge-windows-x64
           path: bridge/cppbridge.dll
           retention-days: 30
-        if: always()
-
-  # ============================================================================
-  # macOS Build (x64)
-  # ============================================================================
-  build-macos:
-    runs-on: macos-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          
-      - name: Install npm dependencies
-        run: npm install
-        
-      - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-        
-      - name: Build
-        run: cmake --build build
-        
-      - name: Copy dylib to bridge folder
-        run: |
-          find build -name "*.dylib" -exec cp {} bridge/cppbridge.dylib \; 2>/dev/null || true
-          ls -la bridge/ || true
-        
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cppbridge-macos-x64
-          path: bridge/cppbridge.dylib
-          retention-days: 30
-        if: always()
-
-  # ============================================================================
-  # Linux Build (x64)
-  # ============================================================================
-  build-linux:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          
-      - name: Install npm dependencies
-        run: npm install
-        
-      - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake
-        
-      - name: Configure CMake  
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-        
-      - name: Build
-        run: cmake --build build
-        
-      - name: Copy so to bridge folder
-        run: |
-          find build -name "*.so" -exec cp {} bridge/cppbridge.so \; 2>/dev/null || true
-          ls -la bridge/ || true
-        
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cppbridge-linux-x64
-          path: bridge/cppbridge.so
-          retention-days: 30
-        if: always()
 
   # ============================================================================
   # Create GitHub Release (on version tag only)
   # ============================================================================
   release:
-    needs: [build-windows, build-macos, build-linux]
+    needs: [build-windows]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     
     steps:
-      - name: Download all build artifacts
+      - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
+          name: cppbridge-windows-x64
           path: artifacts
           
-      - name: List downloaded files
-        run: find artifacts -type f
-        
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            artifacts/cppbridge-windows-x64/cppbridge.dll
-            artifacts/cppbridge-macos-x64/cppbridge.dylib
-            artifacts/cppbridge-linux-x64/cppbridge.so
+          files: artifacts/cppbridge.dll
           generate_release_notes: true
           draft: false
           prerelease: false
