@@ -32,12 +32,16 @@ file(GLOB_RECURSE MODULE_SOURCES
 )
 # Exclude sqlite3.c from C++ sources (it's compiled separately)
 list(FILTER MODULE_SOURCES EXCLUDE REGEX ".*sqlite3\\.c$")
+# Exclude biometric module (deleted/empty stubs)
+list(FILTER MODULE_SOURCES EXCLUDE REGEX ".*biometric\\.(cpp|h)$")
 
 set(HUB_SOURCES
     hub/schema.h
     hub/arena.h
     hub/hub.cpp
     hub/generated_bridge.cpp
+    hub/bridge_runtime.cpp
+    hub/example_bridge.cpp
 )
 
 # =============================================================================
@@ -75,22 +79,22 @@ else()
 endif()
 
 # =============================================================================
-# TEST EXECUTABLE
+# TEST EXECUTABLE (Disabled - main.cpp not present)
 # =============================================================================
-add_executable(BridgeTest 
-    main.cpp 
-    hub/hub.cpp
-    ${CORE_SOURCES}
-    ${MODULE_SOURCES}
-)
+# add_executable(BridgeTest 
+#     main.cpp 
+#     hub/hub.cpp
+#     ${CORE_SOURCES}
+#     ${MODULE_SOURCES}
+# )
 
-target_include_directories(BridgeTest PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/core
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules/database
-    ${CMAKE_CURRENT_SOURCE_DIR}/hub/jsi
-)
+# target_include_directories(BridgeTest PUBLIC 
+#     ${CMAKE_CURRENT_SOURCE_DIR}/hub
+#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/core
+#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules
+#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/modules/database
+#     ${CMAKE_CURRENT_SOURCE_DIR}/hub/jsi
+# )
 
 # =============================================================================
 # UNIT TESTS
@@ -110,12 +114,12 @@ target_include_directories(UnitTests PUBLIC
 )
 
 if(WIN32)
-    target_link_libraries(BridgeTest PRIVATE wininet sqlite3)
+    # target_link_libraries(BridgeTest PRIVATE wininet sqlite3)
     target_link_libraries(UnitTests PRIVATE wininet sqlite3)
 else()
     find_package(CURL REQUIRED)
     find_package(Threads REQUIRED)
-    target_link_libraries(BridgeTest PRIVATE CURL::libcurl Threads::Threads sqlite3)
+    # target_link_libraries(BridgeTest PRIVATE CURL::libcurl Threads::Threads sqlite3)
     target_link_libraries(UnitTests PRIVATE CURL::libcurl Threads::Threads sqlite3)
 endif()
 
@@ -124,10 +128,10 @@ endif()
 # =============================================================================
 if(MSVC)
     target_compile_options(UniversalBridge PRIVATE /W4 /permissive-)
-    target_compile_options(BridgeTest PRIVATE /W4 /permissive-)
+    # target_compile_options(BridgeTest PRIVATE /W4 /permissive-)
 else()
     target_compile_options(UniversalBridge PRIVATE -Wall -Wextra -pedantic)
-    target_compile_options(BridgeTest PRIVATE -Wall -Wextra -pedantic)
+    # target_compile_options(BridgeTest PRIVATE -Wall -Wextra -pedantic)
 endif()
 
 message(STATUS "UniversalBridge v${PROJECT_VERSION}")

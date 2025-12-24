@@ -1,64 +1,696 @@
 {
-  "version": "3.1.0",
-  "generated": "2025-12-21T20:33:44.188Z",
+  "version": "6.0.0",
   "functions": {
-    "add": {
+    "hub_init": {
+      "returnType": "void",
+      "params": [],
+      "async": false
+    },
+    "hub_shutdown": {
+      "returnType": "void",
+      "params": [],
+      "async": false
+    },
+    "hub_version": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "test_string": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "test_add": {
       "returnType": "int",
       "params": [
         "int",
         "int"
-      ]
+      ],
+      "async": false
     },
-    "subtract": {
+    "test_unicode": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "test_store_set": {
+      "returnType": "void",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "test_store_get": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "hub_file_read": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_write": {
+      "returnType": "int",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_exists": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_delete": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_copy": {
+      "returnType": "int",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_dir_create": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_backup": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_file_get_error": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "hub_mmap_create": {
+      "returnType": "int",
+      "params": [
+        "str",
+        "uint64"
+      ],
+      "async": false
+    },
+    "hub_mmap_open": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_mmap_read": {
+      "returnType": "str",
+      "params": [
+        "int",
+        "uint64",
+        "uint64"
+      ],
+      "async": false
+    },
+    "hub_mmap_write": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "uint64",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_mmap_flush": {
+      "returnType": "int",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_mmap_close": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_mmap_size": {
+      "returnType": "uint64",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_http_get": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_http_post": {
+      "returnType": "int",
+      "params": [
+        "str",
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_http_response_status": {
+      "returnType": "int",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_http_response_body": {
+      "returnType": "str",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_ws_create": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "hub_ws_connect": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ws_send": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ws_close": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_ws_is_connected": {
+      "returnType": "int",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_ws_poll": {
+      "returnType": "str",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_ftp_create": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "hub_ftp_connect": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str",
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ftp_disconnect": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "hub_ftp_upload": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ftp_download": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ftp_delete": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_ftp_mkdir": {
+      "returnType": "int",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_crypto_sha256": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_crypto_aes_encrypt": {
+      "returnType": "str",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_crypto_aes_decrypt": {
+      "returnType": "str",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_crypto_pbkdf2": {
+      "returnType": "str",
+      "params": [
+        "str",
+        "str",
+        "int"
+      ],
+      "async": false
+    },
+    "hub_clipboard_clear": {
+      "returnType": "void",
+      "params": [],
+      "async": false
+    },
+    "hub_shell_execute": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_shell_open_url": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_shell_open_file": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_shell_show_in_explorer": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_env_get": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_env_set": {
+      "returnType": "int",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_env_expand": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_base64_encode": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_base64_decode": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_cache_set": {
+      "returnType": "void",
+      "params": [
+        "str",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_cache_get": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_cache_remove": {
+      "returnType": "void",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_cache_clear": {
+      "returnType": "void",
+      "params": [],
+      "async": false
+    },
+    "hub_cache_size": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "hub_compress_rle": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_decompress_rle": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_json_parse": {
+      "returnType": "int",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "hub_json_get_string": {
+      "returnType": "str",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "hub_json_get_number": {
+      "returnType": "double",
+      "params": [
+        "int",
+        "str"
+      ],
+      "async": false
+    },
+    "bridge_version": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "bridge_features": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "bridge_get_last_error": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "bridge_has_error": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "bridge_poll_callbacks": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "demo_add": {
       "returnType": "int",
       "params": [
         "int",
         "int"
-      ]
+      ],
+      "async": false
     },
-    "multiply": {
+    "demo_multiply": {
       "returnType": "double",
       "params": [
         "double",
         "double"
-      ]
+      ],
+      "async": false
     },
-    "divide": {
+    "demo_greet": {
+      "returnType": "str",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "DemoCalc_new": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoCalc_delete": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "DemoCalc_getValue": {
+      "returnType": "int",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "DemoCalc_addTo": {
       "returnType": "int",
       "params": [
         "int",
         "int"
-      ]
+      ],
+      "async": false
     },
-    "greet": {
-      "returnType": "str",
+    "DemoCalc_reset": {
+      "returnType": "void",
       "params": [
-        "str"
-      ]
+        "int"
+      ],
+      "async": false
     },
-    "getVersion": {
-      "returnType": "str",
-      "params": []
-    },
-    "getAppInfo": {
-      "returnType": "str",
-      "params": []
-    },
-    "processText": {
-      "returnType": "str",
+    "demo_divide": {
+      "returnType": "int",
       "params": [
-        "str"
-      ]
+        "int",
+        "int"
+      ],
+      "async": false
     },
-    "stringLength": {
+    "demo_sqrt": {
+      "returnType": "double",
+      "params": [
+        "double"
+      ],
+      "async": false
+    },
+    "demo_start_task": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "DemoMath_sin": {
+      "returnType": "double",
+      "params": [
+        "double"
+      ],
+      "async": false
+    },
+    "DemoMath_cos": {
+      "returnType": "double",
+      "params": [
+        "double"
+      ],
+      "async": false
+    },
+    "DemoStr_length": {
       "returnType": "int",
       "params": [
         "str"
-      ]
+      ],
+      "async": false
     },
-    "bridgeTest": {
+    "DemoStr_upper": {
       "returnType": "str",
-      "params": []
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "DemoCircle_new": {
+      "returnType": "int",
+      "params": [
+        "double"
+      ],
+      "async": false
+    },
+    "DemoCircle_area": {
+      "returnType": "double",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "get_demo_counter": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "set_demo_counter": {
+      "returnType": "void",
+      "params": [
+        "int"
+      ],
+      "async": false
+    },
+    "get_demo_pi": {
+      "returnType": "double",
+      "params": [],
+      "async": false
+    },
+    "set_demo_pi": {
+      "returnType": "void",
+      "params": [
+        "double"
+      ],
+      "async": false
+    },
+    "get_demo_user": {
+      "returnType": "str",
+      "params": [],
+      "async": false
+    },
+    "set_demo_user": {
+      "returnType": "void",
+      "params": [
+        "str"
+      ],
+      "async": false
+    },
+    "DemoColor_Red": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoColor_Green": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoColor_Blue": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoStatus_Idle": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoStatus_Running": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoStatus_Done": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoStatus_Failed": {
+      "returnType": "int",
+      "params": [],
+      "async": false
+    },
+    "DemoPoint_create": {
+      "returnType": "str",
+      "params": [
+        "int",
+        "int"
+      ],
+      "async": false
+    },
+    "DemoVec3_create": {
+      "returnType": "str",
+      "params": [
+        "double",
+        "double",
+        "double"
+      ],
+      "async": false
     }
   }
 }

@@ -1,56 +1,27 @@
 # Build outputs
-build/
-cmake-build-*/
-*.dll
-*.so
-*.dylib
-*.exe
-*.obj
-*.o
-*.lib
-*.a
-*.exp
-*.pdb
-*.ilk
+bridge/*.dll
+bridge/*.so
+bridge/*.dylib
+bridge/*.obj
+bridge/*.exp
+bridge/*.lib
+bridge/registry.json
+bridge/index.d.ts
 
-# IDE files
+# IDE
 .vs/
 .vscode/*
 !.vscode/c_cpp_properties.json
 *.user
-*.sln
-*.vcxproj*
 .idea/
-*.swp
 
-# npm
-node_modules/
-npm-debug.log
-package-lock.json
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Test databases
-*.db
-*.db-*
+# Node
+node_modules/
 
-# Logs
-logs/
+# Temp
+*.tmp
 *.log
-
-# Cache
-.cache/
-__pycache__/
-*.pyc
-
-# Test outputs
-test_crashdumps/
-test_logs/
-
-# Generated files (can be rebuilt)
-backend.dll
-backend.exp
-backend.lib

@@ -1,29 +1,39 @@
 {
-    "name": "universalbridge",
-    "version": "3.0.0",
-    "description": "Universal C++ to JavaScript Bridge - Write C++ once, use everywhere",
+    "name": "cppbridge",
+    "version": "5.2.0",
+    "description": "Universal C++ Bridge - Electron, Web Browser, N-API",
     "main": "bridge/index.js",
+    "types": "bridge/index.d.ts",
     "scripts": {
-        "build:bridge": "node scripts/build.js",
-        "test": "node -e \"const b = require('./bridge'); console.log(b._bridge_test ? b._bridge_test() : 'Build first: npm run build:bridge')\""
+        "build": "node scripts/build.js",
+        "build:web": "node scripts/build-wasm.js",
+        "build:napi": "node scripts/build-napi.js",
+        "watch": "node scripts/watch.js",
+        "test": "node test.js"
     },
     "keywords": [
         "cpp",
         "c++",
         "bridge",
         "electron",
-        "react-native",
         "wasm",
-        "webassembly",
         "ffi",
+        "koffi",
+        "napi",
         "native",
-        "koffi"
+        "dll",
+        "web",
+        "webassembly"
     ],
     "author": "",
     "license": "MIT",
-    "dependencies": {},
-    "devDependencies": {},
     "peerDependencies": {
-        "koffi": "^2.0.0"
+        "koffi": "^2.15.0"
+    },
+    "optionalDependencies": {
+        "node-addon-api": "^7.0.0"
+    },
+    "engines": {
+        "node": ">=14.0.0"
     }
 }

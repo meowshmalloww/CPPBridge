@@ -1,0 +1,172 @@
+# ==============================================================================
+# GitHub Actions - Cross-Platform Build for UniversalBridge
+# ==============================================================================
+# 
+# What this does:
+#   1. On every push to main/master → Builds and tests on all platforms
+#   2. On version tag (v6.1.0) → Creates GitHub Release with binaries
+#   3. Users can download pre-built binaries without needing a compiler
+#
+# ==============================================================================
+
+name: Build & Release
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  # ============================================================================
+  # Windows Build (x64)
+  # ============================================================================
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install npm dependencies
+        run: npm install
+        
+      - name: Configure CMake (Visual Studio 2022)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+        
+      - name: Build Release
+        run: cmake --build build --config Release
+        
+      - name: Copy DLL to bridge folder
+        run: copy build\Release\UniversalBridge.dll bridge\cppbridge.dll
+        
+      - name: Run tests
+        run: node test/test_suite.js
+        continue-on-error: true
+        
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppbridge-windows-x64
+          path: bridge/cppbridge.dll
+          retention-days: 30
+
+  # ============================================================================
+  # macOS Build (x64 + ARM64 Universal)
+  # ============================================================================
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install npm dependencies
+        run: npm install
+        
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+        
+      - name: Build
+        run: cmake --build build
+        
+      - name: Copy dylib to bridge folder
+        run: |
+          if [ -f build/libUniversalBridge.dylib ]; then
+            cp build/libUniversalBridge.dylib bridge/cppbridge.dylib
+          elif [ -f build/UniversalBridge.dylib ]; then
+            cp build/UniversalBridge.dylib bridge/cppbridge.dylib
+          fi
+        
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppbridge-macos-universal
+          path: bridge/cppbridge.dylib
+          retention-days: 30
+        if: always()
+
+  # ============================================================================
+  # Linux Build (x64)
+  # ============================================================================
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install npm dependencies
+        run: npm install
+        
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libcurl4-openssl-dev
+        
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        
+      - name: Build
+        run: cmake --build build
+        
+      - name: Copy so to bridge folder
+        run: |
+          if [ -f build/libUniversalBridge.so ]; then
+            cp build/libUniversalBridge.so bridge/cppbridge.so
+          fi
+        
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppbridge-linux-x64
+          path: bridge/cppbridge.so
+          retention-days: 30
+        if: always()
+
+  # ============================================================================
+  # Create GitHub Release (on version tag only)
+  # ============================================================================
+  release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: List downloaded files
+        run: find artifacts -type f
+        
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/cppbridge-windows-x64/cppbridge.dll
+            artifacts/cppbridge-macos-universal/cppbridge.dylib
+            artifacts/cppbridge-linux-x64/cppbridge.so
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

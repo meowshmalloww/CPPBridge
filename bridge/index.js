@@ -1,18 +1,14 @@
 /**
  * =============================================================================
- * BRIDGE/INDEX.JS - CPPBridge v3.1 Hot-Reload Smart Loader
+ * BRIDGE/INDEX.JS - CPPBridge v6.1 Production Loader
  * =============================================================================
  * 
- * Features:
- * - Shadow Copy: Copies DLL to temp file so original isn't locked
- * - Auto-Discovery: Reads registry.json and binds all functions
- * - Environment Detection: Works in Electron, React Native, Browser
- * - Hot Reload: Allows recompiling while app is running
- * 
- * Usage:
- *   const bridge = require('cppbridge');
- *   bridge.add(1, 2);  // Calls C++ function
- *   bridge.reload();   // Hot-reload after recompiling
+ * v6.1 Production Features:
+ * - DLL Hot-Swap: Versioned DLLs to avoid Windows file locks
+ * - Zero-Copy Buffers: Direct Uint8Array ↔ C++ memory
+ * - Auto-Cleanup: FinalizationRegistry for memory safety
+ * - TypeScript Types: Full autocomplete support
+ * - Shadow Copy: Hot reload without restart
  * 
  * =============================================================================
  */
@@ -21,6 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const os = require('os');
+const { Worker } = require('worker_threads');
 
 // =============================================================================
 // CONFIGURATION
@@ -28,137 +25,168 @@ const os = require('os');
 
 const CONFIG = {
     dllName: 'cppbridge',
-    registryName: 'registry.json',
-    shadowPrefix: 'cppbridge_shadow_',
+    shadowPrefix: 'cppbridge_',
+    consolePollInterval: 100,
 };
 
 let loadedLib = null;
-let loadedFunctions = {};
+let koffi = null;
 let shadowPath = null;
+let registryData = null;
+let currentDllPath = null;
 
 // =============================================================================
-// ENVIRONMENT DETECTION
+// FEATURE 1: DLL HOT-SWAP (Versioned Loading)
 // =============================================================================
+// On Windows, DLLs are locked when loaded. This scans for versioned DLLs
+// and loads the newest one, allowing build scripts to write new versions.
 
-function detectEnvironment() {
-    if (typeof global !== 'undefined' && global.__fbBatchedBridge) {
-        return 'react-native';
-    }
-    if (typeof window !== 'undefined' && typeof process === 'undefined') {
-        return 'browser';
-    }
-    if (typeof window !== 'undefined' && typeof process !== 'undefined' && process.type === 'renderer') {
-        return 'electron-renderer';
-    }
-    if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-        return process.versions.electron ? 'electron-main' : 'node';
-    }
-    return 'unknown';
-}
-
-// =============================================================================
-// TYPE MAPPING (Registry types to Koffi types)
-// =============================================================================
-
-const TYPE_MAP = {
-    'int': 'int',
-    'float': 'float',
-    'double': 'double',
-    'bool': 'bool',
-    'void': 'void',
-    'str': 'str',
-    'string': 'str',
-    'const char*': 'str',
-    'char*': 'str',
-};
-
-function mapType(registryType) {
-    return TYPE_MAP[registryType] || registryType;
-}
-
-// =============================================================================
-// DLL PATH FINDER
-// =============================================================================
-
-function findDllPath() {
+function findVersionedDll() {
     const ext = process.platform === 'win32' ? '.dll' :
         process.platform === 'darwin' ? '.dylib' : '.so';
-    const dllName = CONFIG.dllName + ext;
 
-    const searchPaths = [
+    const searchDirs = [
         __dirname,
-        path.join(__dirname, '..'),
-        path.join(__dirname, '..', 'bridge'),
-        process.cwd(),
+        path.join(__dirname, '..', 'build', 'Release'),
+        path.join(__dirname, '..', 'build', 'Debug'),
+        path.join(process.cwd(), 'build', 'Release'),
         path.join(process.cwd(), 'bridge'),
     ];
 
-    // Electron packaged app
-    if (process.resourcesPath) {
-        searchPaths.push(process.resourcesPath);
-        searchPaths.push(path.join(process.resourcesPath, 'app'));
-        searchPaths.push(path.join(process.resourcesPath, 'app', 'bridge'));
+    let candidates = [];
+
+    for (const dir of searchDirs) {
+        if (!fs.existsSync(dir)) continue;
+
+        try {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                // Match: cppbridge.dll, cppbridge.1234567890.dll, UniversalBridge.dll
+                if (file.endsWith(ext) &&
+                    (file.startsWith(CONFIG.dllName) || file.startsWith('UniversalBridge'))) {
+                    const fullPath = path.join(dir, file);
+                    const stat = fs.statSync(fullPath);
+                    candidates.push({
+                        path: fullPath,
+                        mtime: stat.mtimeMs,
+                        name: file
+                    });
+                }
+            }
+        } catch (e) { }
     }
 
-    for (const dir of searchPaths) {
-        const fullPath = path.join(dir, dllName);
-        if (fs.existsSync(fullPath)) {
-            return fullPath;
-        }
+    if (candidates.length === 0) {
+        throw new Error('No DLL found! Run: npm run build');
     }
 
-    throw new Error(
-        `CPPBridge: DLL not found!\n` +
-        `Run 'npm run build:bridge' to compile your C++ code.\n` +
-        `Looking for: ${dllName}`
-    );
+    // Sort by modification time, newest first
+    candidates.sort((a, b) => b.mtime - a.mtime);
+
+    return candidates[0].path;
 }
 
 // =============================================================================
-// SHADOW COPY STRATEGY (Hot-Reload Support)
+// FINALIZATION REGISTRY (Auto-Cleanup)
 // =============================================================================
-//
-// Problem: On Windows, a loaded DLL is locked and cannot be overwritten.
-// Solution: Copy the DLL to a temp file with a unique hash, load the copy.
-// Benefit: The original DLL remains unlocked for recompilation.
-//
+
+const _cleanupRegistry = new FinalizationRegistry(({ className, handle, deleteFn }) => {
+    try {
+        if (deleteFn) deleteFn(handle);
+    } catch (e) { }
+});
+
+const _classDeleteFns = new Map();
+
+function createManagedObject(className, handle) {
+    const wrapper = { handle, className };
+    const deleteFn = _classDeleteFns.get(className);
+    _cleanupRegistry.register(wrapper, { className, handle, deleteFn });
+    return wrapper;
+}
+
+function registerClassCleanup(className, deleteFn) {
+    _classDeleteFns.set(className, deleteFn);
+}
+
+// =============================================================================
+// PUSH CALLBACKS
+// =============================================================================
+
+const _jsCallbacks = new Map();
+
+function registerCallback(name, fn) {
+    if (typeof fn !== 'function') {
+        throw new Error('Callback must be a function');
+    }
+    _jsCallbacks.set(name, fn);
+}
+
+// =============================================================================
+// FEATURE 2: ZERO-COPY BUFFERS
+// =============================================================================
+// Bind functions that accept Uint8Array for direct memory access
+
+function bindBufferFunction(lib, name, info) {
+    // Check if any param is a buffer type
+    const hasBuffer = info.params.some(p => p === 'buffer' || p === 'uint8*');
+
+    if (!hasBuffer) return null;
+
+    // Create Koffi signature with pointer types
+    const returnType = TYPE_MAP[info.returnType] || info.returnType;
+    const paramTypes = info.params.map(t => {
+        if (t === 'buffer' || t === 'uint8*') return 'uint8*';
+        return TYPE_MAP[t] || t;
+    });
+
+    const fn = lib.func(name, returnType, paramTypes);
+
+    // Return wrapper that handles Uint8Array conversion
+    return (...args) => {
+        const convertedArgs = args.map((arg, i) => {
+            if (arg instanceof Uint8Array) {
+                return arg; // Koffi handles Uint8Array directly
+            }
+            return arg;
+        });
+        return fn(...convertedArgs);
+    };
+}
+
+// =============================================================================
+// TYPE MAPPING
+// =============================================================================
+
+const TYPE_MAP = {
+    'int': 'int', 'float': 'float', 'double': 'double',
+    'bool': 'bool', 'void': 'void', 'str': 'str', 'string': 'str',
+    'uint64': 'uint64', 'int64': 'int64',
+    'buffer': 'uint8*', 'uint8*': 'uint8*',
+};
+
+// =============================================================================
+// SHADOW COPY (Hot Reload Support)
+// =============================================================================
 
 function createShadowCopy(originalPath) {
     const tempDir = os.tmpdir();
-    const hash = crypto.createHash('md5')
-        .update(fs.readFileSync(originalPath))
-        .update(Date.now().toString())
-        .digest('hex')
-        .substring(0, 8);
-
+    const hash = crypto.randomBytes(4).toString('hex');
     const ext = path.extname(originalPath);
-    const shadowName = `${CONFIG.shadowPrefix}${hash}${ext}`;
-    const shadowFullPath = path.join(tempDir, shadowName);
-
-    // Copy the DLL to temp location
+    const shadowFullPath = path.join(tempDir, `${CONFIG.shadowPrefix}${hash}${ext}`);
     fs.copyFileSync(originalPath, shadowFullPath);
-
-    console.log(`[CPPBridge] Shadow copy: ${shadowName}`);
     return shadowFullPath;
 }
 
-function cleanOldShadowCopies() {
+function cleanShadowCopies() {
     try {
         const tempDir = os.tmpdir();
-        const files = fs.readdirSync(tempDir);
-
-        for (const file of files) {
+        for (const file of fs.readdirSync(tempDir)) {
             if (file.startsWith(CONFIG.shadowPrefix)) {
-                try {
-                    fs.unlinkSync(path.join(tempDir, file));
-                } catch (e) {
-                    // File might be in use, ignore
-                }
+                try { fs.unlinkSync(path.join(tempDir, file)); } catch (e) { }
             }
         }
-    } catch (e) {
-        // Ignore cleanup errors
-    }
+    } catch (e) { }
 }
 
 // =============================================================================
@@ -166,69 +194,171 @@ function cleanOldShadowCopies() {
 // =============================================================================
 
 function loadRegistry() {
-    const registryPaths = [
-        path.join(__dirname, CONFIG.registryName),
-        path.join(__dirname, '..', 'bridge', CONFIG.registryName),
-        path.join(__dirname, 'bridge_registry.json'),
-        path.join(process.cwd(), 'bridge', CONFIG.registryName),
+    const paths = [
+        path.join(__dirname, 'registry.json'),
+        path.join(__dirname, '..', 'bridge', 'registry.json'),
+        path.join(process.cwd(), 'bridge', 'registry.json'),
     ];
 
-    for (const regPath of registryPaths) {
-        if (fs.existsSync(regPath)) {
-            console.log(`[CPPBridge] Registry: ${path.basename(regPath)}`);
-            return JSON.parse(fs.readFileSync(regPath, 'utf8'));
+    for (const p of paths) {
+        if (fs.existsSync(p)) {
+            return JSON.parse(fs.readFileSync(p, 'utf8'));
         }
     }
 
-    console.warn('[CPPBridge] No registry found, using empty');
-    return { version: '3.1.0', functions: {} };
+    return { version: '6.1.0', functions: {} };
 }
 
 // =============================================================================
-// KOFFI LOADER (For Electron/Node.js)
+// ASYNC WORKER
 // =============================================================================
 
-function loadWithKoffi() {
-    let koffi;
+function runInWorker(dllPath, funcName, returnType, paramTypes, args) {
+    return new Promise((resolve, reject) => {
+        const workerCode = `
+            const { parentPort, workerData } = require('worker_threads');
+            const koffi = require('koffi');
+            try {
+                const lib = koffi.load(workerData.dllPath);
+                const fn = lib.func(workerData.funcName, workerData.returnType, workerData.paramTypes);
+                const result = fn(...workerData.args);
+                parentPort.postMessage({ success: true, result });
+            } catch (error) {
+                parentPort.postMessage({ success: false, error: error.message });
+            }
+        `;
+
+        const worker = new Worker(workerCode, {
+            eval: true,
+            workerData: { dllPath, funcName, returnType, paramTypes, args }
+        });
+
+        worker.on('message', (msg) => {
+            msg.success ? resolve(msg.result) : reject(new Error(msg.error));
+            worker.terminate();
+        });
+
+        worker.on('error', (err) => {
+            reject(err);
+            worker.terminate();
+        });
+    });
+}
+
+// =============================================================================
+// MAGIC STORE
+// =============================================================================
+
+function createStoreProxy(lib) {
+    try {
+        const _store_get = lib.func('_store_get', 'str', ['str']);
+        const _store_set = lib.func('_store_set', 'void', ['str', 'str']);
+        const _store_get_int = lib.func('_store_get_int', 'int', ['str']);
+        const _store_set_int = lib.func('_store_set_int', 'void', ['str', 'int']);
+        const _store_dump = lib.func('_store_dump', 'str', []);
+
+        return {
+            get: (key) => _store_get(key),
+            set: (key, value) => _store_set(key, String(value)),
+            getInt: (key) => _store_get_int(key),
+            setInt: (key, value) => _store_set_int(key, value),
+            dump: () => JSON.parse(_store_dump() || '{}'),
+        };
+    } catch (e) {
+        return { get: () => null, set: () => { }, dump: () => ({}) };
+    }
+}
+
+// =============================================================================
+// CLASS FACTORY
+// =============================================================================
+
+function createClassFactory(lib, className) {
+    try {
+        const newFn = lib.func(`${className}_new`, 'int', []);
+        const deleteFn = lib.func(`${className}_delete`, 'void', ['int']);
+
+        registerClassCleanup(className, deleteFn);
+
+        return {
+            create: () => {
+                const handle = newFn();
+                return createManagedObject(className, handle);
+            },
+            delete: (wrapper) => {
+                if (wrapper && wrapper.handle) {
+                    deleteFn(wrapper.handle);
+                    wrapper.handle = null;
+                }
+            }
+        };
+    } catch (e) {
+        return null;
+    }
+}
+
+// =============================================================================
+// LOAD BRIDGE
+// =============================================================================
+
+function load() {
     try {
         koffi = require('koffi');
     } catch (e) {
-        throw new Error(
-            `CPPBridge: Koffi not installed!\n` +
-            `Run: npm install koffi`
-        );
+        throw new Error('Koffi not installed! Run: npm install koffi');
     }
 
-    // Clean old shadow copies before loading new one
-    cleanOldShadowCopies();
+    cleanShadowCopies();
 
-    const originalPath = findDllPath();
-    const registry = loadRegistry();
+    // Use versioned DLL finder for hot-swap support
+    const originalPath = findVersionedDll();
+    currentDllPath = originalPath;
+    registryData = loadRegistry();
 
-    // Create shadow copy for hot-reload support
+    // Create shadow copy to avoid file locks
     shadowPath = createShadowCopy(originalPath);
-
-    console.log(`[CPPBridge] Loading: ${path.basename(originalPath)}`);
-
     loadedLib = koffi.load(shadowPath);
-    loadedFunctions = {};
 
-    // Bind all functions from registry
-    for (const [name, info] of Object.entries(registry.functions)) {
+    const bridge = {};
+    let syncCount = 0, asyncCount = 0, bufferCount = 0;
+
+    // Bind user functions
+    for (const [name, info] of Object.entries(registryData.functions)) {
         try {
-            const returnType = mapType(info.returnType);
-            const paramTypes = info.params.map(mapType);
+            const returnType = TYPE_MAP[info.returnType] || info.returnType;
+            const paramTypes = info.params.map(t => TYPE_MAP[t] || t);
 
-            loadedFunctions[name] = loadedLib.func(name, returnType, paramTypes);
+            // Check for buffer function first
+            const bufferFn = bindBufferFunction(loadedLib, name, info);
+            if (bufferFn) {
+                bridge[name] = bufferFn;
+                bufferCount++;
+                continue;
+            }
 
+            if (info.async) {
+                bridge[name] = (...args) => runInWorker(shadowPath, name, returnType, paramTypes, args);
+                asyncCount++;
+            } else {
+                bridge[name] = loadedLib.func(name, returnType, paramTypes);
+                syncCount++;
+            }
         } catch (e) {
-            console.warn(`[CPPBridge] Warning: Could not bind ${name}: ${e.message}`);
+            console.warn(`[CPPBridge] Could not bind: ${name}`);
         }
     }
 
-    console.log(`[CPPBridge] Loaded ${Object.keys(loadedFunctions).length} functions`);
+    // Bind Store
+    bridge.Store = createStoreProxy(loadedLib);
 
-    return loadedFunctions;
+    // Enterprise features
+    bridge.registerCallback = registerCallback;
+    bridge.createClass = (className) => createClassFactory(loadedLib, className);
+
+    console.log(`[CPPBridge] Loaded: ${syncCount} sync, ${asyncCount} async, ${bufferCount} buffer`);
+    console.log(`[CPPBridge] DLL: ${path.basename(currentDllPath)}`);
+
+    return bridge;
 }
 
 // =============================================================================
@@ -236,99 +366,52 @@ function loadWithKoffi() {
 // =============================================================================
 
 function reload() {
-    console.log('[CPPBridge] Reloading...');
-
-    // Unload current library if koffi supports it
-    if (loadedLib && typeof loadedLib.close === 'function') {
-        try {
-            loadedLib.close();
-        } catch (e) {
-            // Ignore close errors
-        }
+    if (loadedLib && loadedLib.close) {
+        try { loadedLib.close(); } catch (e) { }
     }
 
-    // Load fresh copy
-    const newFunctions = loadWithKoffi();
+    const newBridge = load();
 
-    // Update the exported bridge object
+    const preserve = ['reload', '_version', '_getInfo', 'Store', 'registerCallback', 'createClass'];
     for (const key of Object.keys(bridge)) {
-        if (typeof bridge[key] === 'function' && key !== 'reload' && key !== '_getInfo') {
+        if (!preserve.includes(key)) {
             delete bridge[key];
         }
     }
+    Object.assign(bridge, newBridge);
 
-    Object.assign(bridge, newFunctions);
-
-    console.log('[CPPBridge] Reload complete!');
+    console.log('[CPPBridge] Hot reload complete!');
     return bridge;
 }
 
 // =============================================================================
-// JSI LOADER (For React Native)
-// =============================================================================
-
-function loadWithJSI() {
-    const registry = loadRegistry();
-    const funcs = {};
-
-    for (const name of Object.keys(registry.functions)) {
-        if (typeof global[name] === 'function') {
-            funcs[name] = global[name];
-        }
-    }
-
-    return funcs;
-}
-
-// =============================================================================
-// BRIDGE INFO
+// INFO
 // =============================================================================
 
 function getInfo() {
     return {
-        version: '3.1.0',
-        environment: detectEnvironment(),
+        version: '6.1.0',
+        dllPath: currentDllPath,
         shadowPath: shadowPath,
-        loadedFunctions: Object.keys(loadedFunctions),
+        functions: registryData ? Object.keys(registryData.functions) : [],
+        features: ['dll-hot-swap', 'zero-copy-buffers', 'auto-cleanup', 'typescript-types'],
     };
 }
 
 // =============================================================================
-// MAIN EXPORT
+// EXPORT
 // =============================================================================
 
-const environment = detectEnvironment();
 let bridge = {};
 
 try {
-    switch (environment) {
-        case 'electron-main':
-        case 'electron-renderer':
-        case 'node':
-            bridge = loadWithKoffi();
-            break;
-
-        case 'react-native':
-            bridge = loadWithJSI();
-            break;
-
-        case 'browser':
-            console.log('[CPPBridge] Browser mode - use WASM build');
-            break;
-
-        default:
-            console.warn(`[CPPBridge] Unknown environment: ${environment}`);
-            bridge = loadWithKoffi();
-    }
+    bridge = load();
 } catch (e) {
-    console.error('[CPPBridge] Load error:', e.message);
-    bridge = {};
+    console.error('[CPPBridge]', e.message);
 }
 
-// Add utility functions
 bridge.reload = reload;
 bridge._getInfo = getInfo;
-bridge._version = '3.1.0';
-bridge._environment = environment;
+bridge._version = '6.1.0';
 
 module.exports = bridge;

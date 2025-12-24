@@ -8,12 +8,9 @@
 #include "arena.h"
 #include "core/async.h"
 #include "core/logger.h"
-#include "core/types.h"
 #include "modules/filesystem/file_manager.h"
 #include "modules/network/http_client.h"
 
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <windows.h>
 #include <wininet.h>
@@ -115,7 +112,37 @@ __declspec(dllexport) void hub_init() { initialize(); }
 
 __declspec(dllexport) void hub_shutdown() { shutdown(); }
 
-__declspec(dllexport) const char *hub_version() { return "2.0.0"; }
+__declspec(dllexport) const char *hub_version() { return "5.3.0"; }
+
+// =============================================================================
+// TEST FUNCTIONS (for bridge validation)
+// =============================================================================
+static thread_local std::string g_test_result;
+
+__declspec(dllexport) const char *test_string(const char *input) {
+  if (!input)
+    return "";
+  g_test_result = std::string("Echo: ") + input;
+  return g_test_result.c_str();
+}
+
+__declspec(dllexport) int test_add(int a, int b) { return a + b; }
+
+__declspec(dllexport) const char *test_unicode(const char *input) {
+  if (!input)
+    return "";
+  g_test_result = input; // Pass through unicode
+  return g_test_result.c_str();
+}
+
+static std::string g_store_value;
+__declspec(dllexport) void test_store_set(const char *value) {
+  g_store_value = value ? value : "";
+}
+
+__declspec(dllexport) const char *test_store_get() {
+  return g_store_value.c_str();
+}
 
 // =============================================================================
 // LEGACY API (maintained for backward compatibility with test_connection.py)
