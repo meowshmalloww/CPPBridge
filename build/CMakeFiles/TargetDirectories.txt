@@ -1,4 +1,0 @@
-C:/Users/14697/Downloads/UniversalBridge/build/CMakeFiles/sqlite3.dir
-C:/Users/14697/Downloads/UniversalBridge/build/CMakeFiles/UniversalBridge.dir
-C:/Users/14697/Downloads/UniversalBridge/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/14697/Downloads/UniversalBridge/build/CMakeFiles/ZERO_CHECK.dir

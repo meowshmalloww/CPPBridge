@@ -1,4 +1,5 @@
 # Build outputs
+build/
 bridge/*.dll
 bridge/*.so
 bridge/*.dylib
